@@ -1,2 +1,7 @@
 Lab 8-1: Generate an /etc/hosts file
+  Write a playbook that generates an /etc/hosts file on all managed hosts.
+  hint: jinja2
+  
 lab 8-2: manage vsftp service
+Write a playbook that uses at least two plays to install a vsftpd service, configure the vsftp service using templates, and configure permissions as well as SELinux. Apply the following
+
