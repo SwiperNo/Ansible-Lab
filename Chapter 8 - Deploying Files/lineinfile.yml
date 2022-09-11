@@ -1,0 +1,11 @@
+---
+- name: Using Line in file module
+  hosts: all
+
+  tasks:
+
+    - name: Use line in file module
+      lineinfile:
+        dest: /etc/motd
+        line: Adding text for testing
+
