@@ -1,0 +1,15 @@
+---
+- name: Testing stat
+  hosts: all
+
+  tasks:
+
+    - name: Use the stat module
+      stat:
+        path: /etc/motd
+      register: motd
+
+    - name: debug module
+      debug:
+        msg: 
+          - Here is the {{ motd }}
