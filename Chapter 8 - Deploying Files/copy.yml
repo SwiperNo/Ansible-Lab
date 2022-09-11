@@ -1,0 +1,32 @@
+---
+- name: Utlize copy, block, stat, and fetch modules
+  hosts: all
+
+  tasks:
+    - name: Use the copy module to move a file
+      copy:
+        src: /etc/hosts
+        dest: /tmp/
+    
+    - name: Use block to edit the file
+      blockinfile:
+        path: /tmp/hosts
+        block: |
+          192.168.1.0
+          192.168.1.0
+
+    - name: Use the stat module
+      stat:
+        path: /tmp/hosts
+        checksum_algorithm: md5
+      register: result
+
+    - name: Use the debug module to display the results
+      debug:
+        msg: |
+          Here is the result {{ result }}
+
+    - name: Use the fetch module to copy file to ansible primary
+      fetch:
+        src: /tmp/hosts
+        dest: /tmp/
