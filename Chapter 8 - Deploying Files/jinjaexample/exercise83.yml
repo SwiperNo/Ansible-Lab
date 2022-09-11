@@ -1,0 +1,10 @@
+---
+- name: generate /etc/hosts files
+  hosts: all
+
+  tasks:
+
+    - name: Create etc hosts
+      template: 
+        src: exercise83.j2
+        dest: /tmp/hosts
