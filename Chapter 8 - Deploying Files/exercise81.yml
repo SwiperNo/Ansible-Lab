@@ -1,0 +1,53 @@
+---
+- name: Utlize multiple file deploying modules
+  hosts: ansible1
+
+  tasks:
+    - name: Create new file using file module
+      file:
+        path: /tmp/newfile
+        state: touch
+
+    - name: Check new file with stat
+      stat:
+        path: /tmp/newfile
+      register: result
+
+    - name: Expand var with debug module
+      debug:
+        msg: |
+          This the result {{ result }}
+    
+    - name: Change the permissions on the newfile using file module
+      file:
+        path: /tmp/newfile
+        owner: ansible
+      when: result.stat.pw_name != 'root'
+
+- name: Fetching a remote file
+  hosts: ansible1
+  tasks:
+    - name: GET file with the fetch module
+      fetch:
+        src: /etc/motd
+        dest: /tmp/
+    
+- name: Adding text to the file that is now on localhosts
+  hosts: localhost
+  tasks:
+    - name: add a message using block in file module
+      blockinfile:
+        path: /tmp/ansible1/etc/motd
+        block: |
+          Welcome to this server
+          for authorized users only
+        state: present
+ 
+- name: Copy the modified file to ansible2
+  hosts: ansible2
+  tasks:
+    - name: Use the copy module to copy file
+      copy:
+        src: /tmp/ansible1/etc/motd
+        dest: /tmp
+    
