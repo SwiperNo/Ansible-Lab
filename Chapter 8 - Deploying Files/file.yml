@@ -1,0 +1,34 @@
+---
+- name: Using the file module
+  hosts: all
+
+  tasks:
+    - name: Use the file module to create directory
+      file:
+        path: /newdir
+        state: directory
+        owner: rex
+        group: rex
+        mode: 0770
+
+    - name: Create a file with the file module
+      file:
+        path: /newdir/file.txt
+        state: touch
+
+
+    - name: Check file with stat module
+      stat:
+        path: /newdir/file.txt
+      register: fileout
+
+
+    - name: Expand variable with debug
+      debug:
+        msg: <
+          File output {{ fileout }}
+
+    - name: Delete the file using the file module
+      file:
+        path: /newdir
+        state: absent
