@@ -1,0 +1,26 @@
+---
+#This playbook is supposed to fail if done correcty!
+- name: Another stat file
+  hosts: all
+
+  tasks:
+
+    - name: use command module
+      command:
+        cmd: touch /tmp/statfile
+
+    - name: Use stat module to check
+      stat:
+        path: /tmp/statfile
+      register: statcheck
+
+    - name: expand stat var
+      debug:
+        msg:
+          - show the {{ statcheck }}
+    
+    - name: fail when reqs not met
+      fail:
+        msg:
+          - unexpected file mode
+      when: statcheck.stat.mode != '0640'
