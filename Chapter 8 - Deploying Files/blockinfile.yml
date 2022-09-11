@@ -1,0 +1,12 @@
+---
+- name: Using block in file module
+  hosts: all
+
+  tasks:
+
+    - name: Use block in file module
+      blockinfile:
+        dest: /etc/motd
+        block: |
+          line one
+          line two
