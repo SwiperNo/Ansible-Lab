@@ -1,0 +1,15 @@
+---
+- name: Remove files created by previous tasks
+  hosts: ansible1
+
+  tasks:
+
+    - name: Use file module
+      file:
+        dest: /tmp/multiline1.txt
+        state: absent
+
+    - name: use file module
+      file:
+        dest: /tmp/multiline2.txt
+        state: absent
