@@ -1,0 +1,18 @@
+---
+- name: Install and start  web server using custom facts
+  hosts: ansible1
+
+
+  tasks:
+
+    - name: Install using facts
+      yum:
+        name: "{{ ansible_facts['ansible_local']['custom']['software']['package'] }}"
+        state: latest
+
+
+    - name: Enable service
+      service:
+        name: "{{ ansible_facts['ansible_local']['custom']['software']['service'] }}"
+        state: "{{ ansible_facts['ansible_local']['custom']['software']['state'] }}"
+        enabled: "{{ ansible_facts['ansible_local']['custom']['software']['enabled'] }}"
