@@ -1,0 +1,15 @@
+#Fix this playbook
+ ---
+ - name: Install, start, and enable httpd
+   hosts: ansible1
+   
+   tasks:
+     - name: Install package
+       yum:
+         name: httpd
+         state: latest
+         
+     - name: Start service
+       service:
+         name: htppd
+        state: latest
