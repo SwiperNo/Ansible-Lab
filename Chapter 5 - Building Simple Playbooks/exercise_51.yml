@@ -1,0 +1,16 @@
+---
+- name: Install VSFTP on all servers
+  hosts: all
+
+  tasks:
+
+    - name: Install VSFTP
+      yum:
+        name: vsftpd
+        state: latest
+
+    - name: start service and enable
+      service:
+        name: vsftpd
+        state: started
+        enabled: yes
