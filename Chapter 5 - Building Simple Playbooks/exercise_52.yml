@@ -1,0 +1,18 @@
+---
+- name: Use the copy module for multi line text
+  hosts: ansible1
+
+  tasks:
+    - name: Add multi line text using |
+      copy:
+        content: |
+          line 1
+          line 2
+        dest: /tmp/multiline1.txt
+
+    - name: add multi line text using >
+      copy:
+        content: >
+          line 1
+          line 2
+        dest: /tmp/multiline2.txt
