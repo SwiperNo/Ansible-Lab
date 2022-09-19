@@ -1,0 +1,10 @@
+---
+- name: remove exercise installs
+  hosts: all
+
+  tasks:
+
+    - name: Remove vsftpd
+      yum:
+        name: vsftpd
+        state: absent
