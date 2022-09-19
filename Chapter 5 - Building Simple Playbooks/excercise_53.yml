@@ -1,0 +1,47 @@
+---
+- name: enable web server
+  hosts: ansible1
+
+  tasks:
+    - name: Install packages
+      yum: 
+        name: 
+          - httpd
+          - firewalld
+        state: present
+
+    - name: Copy stuff
+      copy:
+        content: "The webserver!\n"
+        dest: /var/www/html/index.html
+
+    - name: enable webserver
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+    
+    - name: enable firwalld
+      service:
+        name: firewalld
+        state: started
+        enabled: yes
+
+    - name: enable firewall http
+      firewalld:
+        service: http
+        permanent: yes
+        immediate: yes
+        state: enabled
+
+
+- name: Second task
+  hosts: localhost
+
+  tasks:
+
+    - name: Test webserver
+      uri:
+        url: http://ansible1
+        return_content: yes
+        status_code: 200
