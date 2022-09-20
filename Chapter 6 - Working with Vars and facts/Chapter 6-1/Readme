@@ -1,0 +1,1 @@
+This lab creates custom facts and sends to remote server. Block and rescue modules are utlized but not 100% efficient. 
