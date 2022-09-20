@@ -1,0 +1,15 @@
+---
+- name: Import FTP and FTP configuration
+  hosts: ansible2
+
+  vars_files:
+    - vars/vars.yml
+
+
+  tasks:
+
+    - name: Import FTP playbook
+      import_tasks: tasks/ftp.yml
+
+    - name: Import COPY playbook
+      import_tasks: tasks/copy.yml
