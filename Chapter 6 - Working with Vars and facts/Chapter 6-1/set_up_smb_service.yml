@@ -1,0 +1,27 @@
+---
+- name: Set up file services
+  hosts: file
+  
+  vars_files:
+    - vars/allvars.yml
+    - vars/vars_facts.yml
+
+  tasks:
+
+    - name: Install samba services
+      yum: 
+        name: "{{ ansible_facts['ansible_local']['newfacts']['packages']['smb_package'] }}"
+        state: latest
+
+    - name: Start samba services
+      service:
+        name: smb
+        state: started
+        enabled: yes
+
+    - name: Enabled firewalld for samba
+      firewalld:
+        port: 445/tcp
+        immediate: yes
+        permanent: yes
+        state: enabled
