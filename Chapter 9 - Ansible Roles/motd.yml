@@ -1,0 +1,7 @@
+---
+- name: using roles
+  hosts: all
+
+  roles:
+    - role: motd
+      system_manager: kcjones@swipe.com
