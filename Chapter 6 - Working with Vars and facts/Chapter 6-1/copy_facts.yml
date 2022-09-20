@@ -1,0 +1,35 @@
+---
+- name: Copy facts to remote server
+  hosts: all
+  vars_files:
+    - vars/vars_facts.yml
+
+
+  tasks:
+    - name: Start a block rescue on the process
+      block:
+        - name: Verify the path exist
+          stat:
+            path: /etc/ansible/facts.d
+          register: directory_exist
+          failed_when: not directory_exist.exists
+
+        
+        - name: if the path exist install custom fact
+          copy:
+            src: "{{ fact_file }}"
+            dest: "{{ remote_dir }}"
+
+      rescue:
+        - name: Directory does not exist, so create
+          file: 
+            path: /etc/ansible/facts.d
+            state: directory
+            owner: root
+            group: root
+            mode: 0600
+        
+        - name: Copy custom fact files
+          copy:
+            src: "{{ fact_file }}"
+            dest: "{{ remote_dir }}"
