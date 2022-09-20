@@ -1,0 +1,47 @@
+---
+- name: Set up file services
+  hosts: lamp
+  
+  vars_files:
+    - vars/allvars.yml
+    - vars/vars_facts.yml
+
+  tasks:
+
+    - name: Install apache packages
+      yum: 
+        name: "{{ ansible_facts['ansible_local']['newfacts']['packages']['web_package'] }}"
+        state: latest
+
+    - name: Install DB packages
+      yum:
+        name: "{{ ansible_facts['ansible_local']['newfacts']['packages']['db_package'] }}"
+        state: latest
+
+    - name: Start httpd services
+      service:
+        name: "{{ ansible_facts['ansible_local']['newfacts']['services']['web_service'] }}"
+        state: started
+        enabled: yes
+
+    - name: Enabled firewalld for http
+      firewalld:
+        port: 80/tcp
+        immediate: yes
+        permanent: yes
+        state: enabled
+
+    - name: Enable firewalld for https
+      firewalld:
+        port: 443/tcp
+        immediate: yes
+        permanent: yes
+        state: enabled
+    
+    - name: Enable firewalld for MariaDB
+      firewalld:
+        port: 3306/tcp
+        immediate: yes
+        permanent: yes
+        state: enabled
+
