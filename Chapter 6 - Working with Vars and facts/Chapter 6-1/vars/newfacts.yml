@@ -1,0 +1,4 @@
+---
+
+remote_dir: /etc/ansible/facts.d/newfacts.fact
+fact_file: custom.facts
