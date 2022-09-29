@@ -1,0 +1,21 @@
+---
+- name: Install packages
+  hosts: ansible1
+  ignore_errors: yes
+  vars_files:
+    - vars/vars.yml
+
+
+  tasks:
+    - name: Install packages
+      yum:
+        name: "{{ item.name }}"
+        state: latest
+      loop: "{{ packages }}"
+      when: (ansible_distribution_major_version == "8")
+      register: result
+
+
+    - name: Show results
+      debug:
+        var: result
