@@ -1,0 +1,15 @@
+---
+- name: Create users using a loop from a list
+  hosts: dev
+  vars_files:
+    vars/user-list.yml
+
+  tasks:
+
+    - name: Create users
+      user:
+        name: "{{ item.username }}"
+        state: present
+        groups: "{{ item.groups }}"
+        shell: "{{ item.shell }}"
+      loop: "{{ users }}"
