@@ -1,8 +1,6 @@
 ---
 - name: Check existence of devices
   hosts: all
-  vars_files:
-    vars/disk.yml
   ignore_errors: yes
 
   tasks:
