@@ -1,0 +1,33 @@
+---
+- name: Check existence of devices
+  hosts: all
+  vars_files:
+    vars/disk.yml
+  ignore_errors: yes
+
+  tasks:
+
+    - name: check for exsistence of devices
+      debug:
+        msg: |
+          Disk found on {{ ansible_facts['hostname'] }}
+      when: ansible_facts['devices']['nvme0n1']  is defined
+
+    - name: Check for a second disk
+      debug:
+        msg: |
+          Second disk found on  {{ ansible_facts['hostname'] }}
+      when: ansible_facts['devices']['nvme0n2'] is defined
+
+    - name: These hosts do not have a second disk
+      debug:
+        msg: |
+          The disk does not exist or defined on {{ ansible_facts['hostname'] }}
+      when: ansible_facts['devices']['nvme0n2'] is not defined
+
+
+    - name: Check the size of the disk matches the size standard
+      debug:
+        msg: |
+          The disk for {{ ansible_facts['hostname'] }} is {{ ansible_facts['devices']['nvme0n1']['size'] }}
+      when: ansible_facts['devices']['nvme0n2']['size'] == "20.00 GB"
