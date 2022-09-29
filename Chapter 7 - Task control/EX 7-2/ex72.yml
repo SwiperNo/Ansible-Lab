@@ -1,0 +1,20 @@
+---
+- name: Using when condition
+  hosts: ansible1
+
+  tasks:
+
+    - name: Get httpd status
+      command: systemctl is-active httpd
+      ignore_errors: yes
+      register: result
+
+    - name: Send to debug
+      debug:
+        msg: Printing result {{ result }}
+
+    - name: start restart serivce
+      service:
+        name: httpd
+        state: restarted
+      when: result.rc == 0
