@@ -1,0 +1,16 @@
+---
+- name: Using handlers
+  hosts: ansible1
+  force_handlers: yes
+
+  handlers:
+    - name: reboot server
+      reboot:
+
+  tasks:
+
+    - name: Update kernel
+      yum:
+        name: kernel
+        state: latest
+      notify: reboot server
