@@ -1,0 +1,14 @@
+---
+- name: Using register
+  hosts: dev
+
+  tasks:
+
+    - name: Using register
+      shell: cat /etc/passwd
+      register: passwd
+
+    - name: Show output
+      debug:
+        msg: passwd contains Zelda - enter the triforce
+      when: passwd.stdout.find('zelda') != -1
