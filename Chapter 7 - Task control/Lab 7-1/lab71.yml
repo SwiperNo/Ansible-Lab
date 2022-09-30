@@ -1,0 +1,56 @@
+---
+- name: Install packages
+  hosts: all
+
+  vars_files:
+    vars/pack.yml
+
+  tasks:
+
+    - name: Install packages
+      block:
+        - name: Install packages and loop
+          yum:
+            name: "{{ item.package }}"
+            state: "{{ item.state }}"
+          loop: "{{ packages }}"
+          when:
+            ( ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_version'] == "8" )
+            or
+            ( ansible_facts['distribution'] == "RedHat" and ansible_facts['distribution_version'] >= "8.1" )
+
+        - name: Copy file to /tmp
+          copy:
+            content: "Welcome to my webserver"
+            dest: /tmp/index.html
+          notify: restart web
+        
+        - name: Check for firewalld
+          yum:
+            name: firewalld
+            state: latest
+
+        - name: verify firewalld is started
+          service:
+            name: firewalld
+            state: started
+
+        - name: open firewall ports for http and https
+          firewalld:
+            service: "{{ item.service }}"
+            state: "{{ item.state }}"
+            immediate: yes
+            permanent: yes
+          loop: "{{ firewall }}"
+
+      rescue:
+        - name: fail if any task fail
+          fail:
+            msg:   did not meet the requirements
+  
+  handlers:
+    - name: restart web
+      service:
+        name: httpd
+        state: restarted
+
