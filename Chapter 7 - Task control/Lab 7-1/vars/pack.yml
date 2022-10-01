@@ -1,0 +1,11 @@
+packages:
+  - package: httpd
+    state: latest
+  - package: mod_ssl
+    state: latest
+
+firewall:
+  - service: http
+    state: enabled
+  - service: https
+    state: enabled
