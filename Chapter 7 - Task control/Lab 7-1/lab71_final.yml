@@ -1,0 +1,50 @@
+---
+- name: End of chapter lab 7 final
+  hosts: all
+  become: true
+  vars_files:
+    - vars/pack.yml
+
+  tasks:
+
+    - name: Install httpd and mod_ssl packages
+      yum:
+        name: "{{ item.package }}"
+        state: "{{ item.state }}"
+      loop: "{{ packages }}"
+      when: 
+        ( ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_version'] <= "8" )
+        or
+        ( ansible_facts['distribution'] == "RedHat" and ansible_facts['distribution_version'] <= "8" )
+    
+    - name: Fail if the following is not met
+      fail:
+        msg: "Host {{ ansible_facts['hostname'] }} does not meet the minimal requirements"
+      when:
+        not (( ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_version'] <= "8" )
+        or 
+        ( ansible_facts['distribution'] == "RedHat" and ansible_facts['distribution_version'] <= "8" ))
+
+    - name: Copy tmp file
+      copy:
+        content: "Welcome to my webserver"
+        dest: /tmp/index.html
+      register: result
+      notify: restart web
+
+    - name: Configure Firewalld for http and https rules
+      firewalld:
+        service: "{{ item.service }}"
+        state: "{{ item.state }}"
+        immediate: yes
+        permanent: yes
+      loop: "{{ firewall }}"
+       
+
+  handlers:
+    - name: restart web
+      service:
+        name: httpd
+        state: restarted
+
+
