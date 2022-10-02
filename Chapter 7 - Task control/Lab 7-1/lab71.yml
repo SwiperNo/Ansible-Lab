@@ -1,3 +1,4 @@
+#PS this is not how this playshould be handled. 
 ---
 - name: Install packages
   hosts: all
