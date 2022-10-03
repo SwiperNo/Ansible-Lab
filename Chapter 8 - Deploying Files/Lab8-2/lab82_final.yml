@@ -1,0 +1,62 @@
+---
+- name: Manage vsftpd service
+  hosts: all
+
+  vars:
+
+    - anon_answer: 'YES'
+    - local_answer: 'YES'
+    - write_answer: 'YES'
+    - anon_upload_answer: 'YES'
+
+  tasks:
+   
+    - name: Install vsftpd server
+      yum:
+        name: vsftpd
+        state: latest
+
+    - name: Enable vsftpd service
+      service:
+        name: vsftpd
+        state: started
+        enabled: yes
+
+    - name: Enable service on Firewalld
+      firewalld:
+        service: ftp
+        state: enabled
+        immediate: yes
+        permanent: yes
+
+    - name: Generate vsftpd template
+      template:
+        src: vsftp.j2
+        dest: /etc/vsftpd/vsftpd.conf
+    
+    - name: Use line in file to edit Vsftp file
+      lineinfile:
+        path: /etc/vsftpd/vsftpd.conf
+        regex: '^#anon_upload_enable'
+        line: anon_upload_enabled=YES
+    - name: Set permissions /var/ftp/pub
+      file:
+        path: /var/ftp/pub
+        mode: 0777
+
+    - name: Configure Sebool values
+      seboolean:
+        name: ftpd_anon_write
+        state: yes
+        persistent: yes
+
+    - name: Set secontext
+      sefcontext:
+        target: '/var/ftp(/.*)?'
+        setype: public_content_rw_t
+        state: present
+      notify: restorecon
+
+  handlers:
+    - name: Restore context
+      command: restorecon -Rv /var/ftp/pub
