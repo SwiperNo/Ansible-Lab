@@ -1,0 +1,10 @@
+---
+users:
+  - username: dekutree
+    groups: prof
+  - username: shiek
+    groups: prof
+  - username: kokorichild
+    groups: students
+  - username: meido
+    groups: students
