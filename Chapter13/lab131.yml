@@ -1,0 +1,83 @@
+---
+- name: Create users on localhost
+  hosts: localhost
+
+  vars_files:
+    - vars/lab131.yml
+    - vault/pass.yml
+
+  tasks:
+
+    - name: Create password using debug
+      debug:
+        msg: "{{ 'password'| password_hash('sha512','mysalt') }}"
+      register: result
+
+    - name: display password
+      debug:
+        var: result.msg
+
+    - name: Create group
+      group:
+        name: "{{ item.groups }}"
+        state: present
+      loop: "{{ users }}"
+
+    - name: Create user accounts
+      user:
+        name: "{{ item.username }}"
+        groups: "{{ item.groups }}"
+        password: "{{ creds  }}"
+        generate_ssh_key: yes
+        ssh_key_bits: 2048
+        ssh_key_comment: "{{ item.username }}@{{ ansible_fqdn }}"
+      loop: "{{ users }}"
+
+    - name: Create directory to store key
+      file:
+        path: "{{ item.username }}"
+        state: directory
+      loop: "{{ users }}"
+
+    - name: Cat key to file
+      shell: 'cat /home/{{ item.username }}/.ssh/id_rsa.pub > {{ item.username }}/id_rsa.pub'
+      loop: "{{ users }}"
+
+    - name: Check for file
+      command: ls -l {{ item.username }}/
+      loop: "{{ users }}"
+   
+
+- name: Create user account and password
+  hosts: ansible2
+
+  vars_files:
+    - vars/lab131.yml
+    - vault/pass.yml
+
+  tasks:
+
+    - name: Create groups
+      group:
+        name: "{{ item.groups }}"
+        state: present
+      loop: "{{ users }}"
+
+    - name: Set up users
+      user:
+        name: "{{ item.username }}"
+        groups: "{{ item.groups }}"
+        password: "{{ creds  }}"
+      loop: "{{ users }}"
+    
+    - name: Copy key from localhost
+      authorized_key:
+        user: "{{ item.username }}"
+        key: "{{ lookup('file', './' + item.username + '/id_rsa.pub') }}"
+      loop: "{{ users }}"
+
+    - name: Create Sudo file
+      copy:
+        content: "%prof ALL=(ALL) NOPASSWD:ALL"
+        dest: /etc/sudoers.d/sudogroups
+
